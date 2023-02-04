@@ -6,6 +6,7 @@ import { BatteryChargingFullFilled } from '@vicons/material'
 import { BatteryInfo, RectifierInfo } from '@/protos/messages';
 import { getBatteryInfo, getRectifierInfo } from '@/api/api';
 import BatteryIcon from '@/components/BatteryIcon.vue';
+import { parseBatteryAlarm, Severity } from '@/utils/BatteryParser';
 
 const battInfo = ref(null as (BatteryInfo | null))
 const rectifierInfo = ref(null as (RectifierInfo | null))
@@ -49,6 +50,26 @@ const chargeLabel = computed(() => {
   return '';
 })
 
+const batteryStatus = computed(() => {
+  if (battInfo.value) {
+    return parseBatteryAlarm(battInfo.value.alarm);
+  }
+  return [];
+});
+
+function severityToType(severity: Severity) {
+  switch (severity) {
+    case Severity.Protection:
+      return "error";
+    case Severity.Alarm:
+      return "warning";
+    case Severity.Status:
+      return "info";
+    case Severity.Other:
+      return "default";
+  }
+}
+
 </script>
 
 <template>
@@ -57,12 +78,17 @@ const chargeLabel = computed(() => {
       <n-card title="电池状态">
         <div v-if="battInfo" class="info-card-content">
           <span class="status-tag">
-            <n-tag type="success" v-if="battInfo.current < -0.01">
-              充电中
+            <n-tooltip trigger="hover">
+              <template #trigger>
+                <div class="status-tag-container">
+
+            <n-tag v-for="status in batteryStatus" :type="severityToType(status.severity)">
+              {{ status.name }}
             </n-tag>
-            <n-tag type="info" v-if="battInfo.current > 0.01">
-              放电中
-            </n-tag>
+                </div>
+            </template>
+            状态：{{ battInfo.alarm }}
+            </n-tooltip>
           </span>
           <n-grid cols="2 s:4 m:2 l:4" responsive="screen">
             <n-grid-item>
@@ -250,6 +276,12 @@ const chargeLabel = computed(() => {
   position: absolute;
   top: 10px;
   right: 10px;
+}
+
+.status-tag-container {
+  display: flex;
+  flex-direction: row;
+  gap: 7px;
 }
 
 .cell-div {
