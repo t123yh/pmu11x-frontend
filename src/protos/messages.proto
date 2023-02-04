@@ -1,0 +1,74 @@
+syntax = "proto2";
+import "nanopb.proto";
+
+message BatteryCellInfo {
+  required bool under_voltage = 1;
+  required bool over_voltage = 2;
+  required bool balance = 3;
+  required float value = 4;
+}
+
+message BatteryInfo {
+  repeated BatteryCellInfo cells = 1 [(nanopb).max_count = 16];
+  required float current = 2;
+  required float soc = 3;
+  required float full_capacity = 4;
+  repeated sint32 temperatures = 5 [(nanopb).max_count = 4];
+  required bytes alarm = 6 [(nanopb).max_size = 12];
+  required int32 loop = 7;
+  required float voltage_sum = 8;
+  required float soh = 9;
+}
+
+message RectifierInfo {
+  required uint32 status_value = 1;
+  required float input_power = 2;
+  required float input_frequency = 3;
+  required float input_current = 4;
+  required float output_power = 5;
+  required float efficiency = 6;
+  required float output_voltage = 7;
+  required float max_output_current = 8;
+  required float input_voltage = 9;
+  required float output_module_temp = 10;
+  required float input_module_temp = 11;
+  required float output_current = 12;
+  required uint32 alarm_value = 13;
+}
+
+message StaticIpConfig {
+  required bytes addr = 1 [(nanopb).max_size = 4, (nanopb).fixed_length = true];
+  required bytes netmask = 2 [(nanopb).max_size = 4, (nanopb).fixed_length = true];
+  required bytes gateway = 3 [(nanopb).max_size = 4, (nanopb).fixed_length = true];
+  required bytes dns_server = 4 [(nanopb).max_size = 4, (nanopb).fixed_length = true];
+}
+
+message DhcpConfig {
+  required string hostname = 1 [default = "pmu11x", (nanopb).max_length = 12];
+}
+
+message Parameters {
+  required float charge_current_0_5 = 1 [default = 3];
+  required float charge_current_5_90 = 2 [default = 15];
+  required float charge_current_90_100 = 3 [default = 5];
+  required float safe_voltage = 4 [default = 50];
+  // Battery low level: when battery SoC is lower than this threshold,
+  // mains_supply_enable will be ignored, and mains will always be enabled
+  required float battery_low = 5 [default = 35];
+  // Battery critical level: when battery SoC is lower than this threshold,
+  // notify all computers with NUT protocol shutdown
+  required float battery_critical = 6 [default = 10];
+}
+
+message NetworkConfig {
+  repeated string ntp_server = 1 [(nanopb).max_length = 20, (nanopb).max_count = 3];
+  required StaticIpConfig static_ip = 2;
+  // If dhcp not working, fall back to static ip
+  optional DhcpConfig dhcp = 3;
+}
+
+message PowerConfig {
+  required Parameters params = 1;
+  required bool charge_disable = 2 [default = false];
+  required bool mains_supply_disable = 3 [default = false];
+}
