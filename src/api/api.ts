@@ -1,6 +1,6 @@
 import { BatteryInfo, RectifierInfo } from '@/protos/messages'
 
-const apiUrl = "http://192.168.1.115:8000";
+const apiUrl = import.meta.env.PROD ? "" : "http://192.168.1.115:8000";
 
 export async function fetchApi(url: string, abort?: AbortSignal): Promise<Uint8Array | null> {
     if (!url.startsWith('/')) {

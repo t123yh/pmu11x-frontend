@@ -20,17 +20,17 @@ async function updateRectifierInfo() {
   rectifierInfo.value = await getRectifierInfo(abortController.signal);
 }
 
-let updating = false;
+let updating = ref(false);
 
 async function updateInfo() {
   abortController.abort();
   abortController = new AbortController();
-  updating = true;
+  updating.value = true;
   await Promise.all([updateBatteryInfo(), updateRectifierInfo()]);
-  updating = false;
+  updating.value = false;
 }
 
-const updateBatteryInterval = setInterval(updateInfo, 500);
+const updateBatteryInterval = setInterval(updateInfo, 1000);
 onMounted(() => {
   updateInfo();
 });
@@ -113,7 +113,7 @@ function severityToType(severity: Severity) {
             </n-grid-item>
           </n-grid>
           <n-statistic label="电量">
-            <span class="batt-cap-text">
+            <span class="batt-cap-text" style="margin-right: 5px">
               <n-icon size="22" color="#0e7a0d" class="align-icon">
                 <battery-icon :percentage="battInfo.soc" />
               </n-icon>

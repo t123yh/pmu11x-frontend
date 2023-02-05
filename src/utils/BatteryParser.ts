@@ -145,7 +145,6 @@ export function parseBatteryAlarm(arr: Uint8Array): BatteryAlarm[] {
             const byte = Number(g.byte);
             const bit = Number(g.bit);
             if (arr[byte] & (1 << bit)) {
-                console.log(`${byte} ${bit}`)
                 alarms.push({
                     name: g.cn_name,
                     severity: Number(g.severity),
