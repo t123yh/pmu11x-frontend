@@ -30,7 +30,7 @@ async function updateInfo() {
   updating.value = false;
 }
 
-const updateBatteryInterval = setInterval(updateInfo, 1000);
+const updateBatteryInterval = setInterval(updateInfo, 500);
 onMounted(() => {
   updateInfo();
 });
@@ -82,12 +82,12 @@ function severityToType(severity: Severity) {
               <template #trigger>
                 <div class="status-tag-container">
 
-            <n-tag v-for="status in batteryStatus" :type="severityToType(status.severity)">
-              {{ status.name }}
-            </n-tag>
+                  <n-tag v-for="status in batteryStatus" :type="severityToType(status.severity)">
+                    {{ status.name }}
+                  </n-tag>
                 </div>
-            </template>
-            状态：{{ battInfo.alarm }}
+              </template>
+              状态：{{ battInfo.alarm }}
             </n-tooltip>
           </span>
           <n-grid cols="2 s:4 m:2 l:4" responsive="screen">
@@ -171,91 +171,97 @@ function severityToType(severity: Severity) {
       </n-card>
     </n-grid-item>
     <n-grid-item span="1">
-      <n-card title="整流器状态">
-        <div v-if="rectifierInfo" class="info-card-content">
-          <span class="status-tag">
-            <n-tooltip trigger="hover">
-              <template #trigger>
-                <n-tag type="warning" v-if="(rectifierInfo.alarmValue & (1 << 27))">
-                  输入欠压
-                </n-tag>
-                <n-tag type="info" v-else-if="!(rectifierInfo.alarmValue & (1 << 17))">
-                  工作中
-                </n-tag>
-                <n-tag type="default" v-else>
-                  未工作
-                </n-tag>
-              </template>
-              状态：{{ rectifierInfo.alarmValue }}
-            </n-tooltip>
-          </span>
-          <n-grid cols="3" item-responsive responsive="self">
-            <n-grid-item span="0 540:1">
-              <n-statistic label="输入电压 / 频率">
-                {{ rectifierInfo.inputVoltage.toFixed(1) }}V / {{ rectifierInfo.inputFrequency.toFixed(1) }}Hz
-              </n-statistic>
-            </n-grid-item>
-            <n-grid-item span="1 540:0">
-              <n-statistic label="输入电压">
-                {{ rectifierInfo.inputVoltage.toFixed(1) }}V
-              </n-statistic>
-            </n-grid-item>
-            <n-grid-item>
-              <n-statistic label="输入电流">
-                {{ rectifierInfo.inputCurrent.toFixed(2) }}A
-              </n-statistic>
-            </n-grid-item>
-            <n-grid-item>
-              <n-statistic label="输入功率">
-                {{ rectifierInfo.inputPower.toFixed(0) }}W
-              </n-statistic>
-            </n-grid-item>
-          </n-grid>
-          <n-grid cols="3">
-            <n-grid-item>
-              <n-statistic label="输出电压">
-                {{ rectifierInfo.outputVoltage.toFixed(2) }}V
-              </n-statistic>
-            </n-grid-item>
-            <n-grid-item>
-              <n-statistic label="输出电流">
-                {{ rectifierInfo.outputCurrent.toFixed(2) }}A
-              </n-statistic>
-            </n-grid-item>
-            <n-grid-item>
-              <n-statistic label="输出功率">
-                {{ rectifierInfo.outputPower.toFixed(0) }}W
-              </n-statistic>
-            </n-grid-item>
-          </n-grid>
-          <n-grid cols="3">
-            <n-grid-item>
-              <n-statistic label="输入模块温度">
-                <n-icon size="22" color="#0e7a0d" class="align-icon">
-                  <Temperature16Regular />
-                </n-icon>
-                <span class="align-text">{{ rectifierInfo.inputModuleTemp.toFixed(0) }}℃</span>
-              </n-statistic>
-            </n-grid-item>
-            <n-grid-item>
-              <n-statistic label="输出模块温度">
-                <n-icon size="22" color="#0e7a0d" class="align-icon">
-                  <Temperature16Regular />
-                </n-icon>
-                <span class="align-text">{{ rectifierInfo.outputModuleTemp.toFixed(0) }}℃</span>
-              </n-statistic>
-            </n-grid-item>
-            <n-grid-item>
-              <n-statistic label="效率">
-                {{ (rectifierInfo.efficiency * 100).toFixed(1) }}%
-              </n-statistic>
-            </n-grid-item>
-          </n-grid>
-        </div>
-        <div v-else>
-          读取整流器信息失败！
-        </div>
-      </n-card>
+      <div class="two-box">
+
+        <n-card title="整流器状态">
+          <div v-if="rectifierInfo" class="info-card-content">
+            <span class="status-tag">
+              <n-tooltip trigger="hover">
+                <template #trigger>
+                  <n-tag type="warning" v-if="(rectifierInfo.alarmValue & (1 << 27))">
+                    输入欠压
+                  </n-tag>
+                  <n-tag type="info" v-else-if="!(rectifierInfo.alarmValue & (1 << 17))">
+                    工作中
+                  </n-tag>
+                  <n-tag type="default" v-else>
+                    未工作
+                  </n-tag>
+                </template>
+                状态：{{ rectifierInfo.alarmValue }}
+              </n-tooltip>
+            </span>
+            <n-grid cols="3" item-responsive responsive="self">
+              <n-grid-item span="0 540:1">
+                <n-statistic label="输入电压 / 频率">
+                  {{ rectifierInfo.inputVoltage.toFixed(1) }}V / {{ rectifierInfo.inputFrequency.toFixed(1) }}Hz
+                </n-statistic>
+              </n-grid-item>
+              <n-grid-item span="1 540:0">
+                <n-statistic label="输入电压">
+                  {{ rectifierInfo.inputVoltage.toFixed(1) }}V
+                </n-statistic>
+              </n-grid-item>
+              <n-grid-item>
+                <n-statistic label="输入电流">
+                  {{ rectifierInfo.inputCurrent.toFixed(2) }}A
+                </n-statistic>
+              </n-grid-item>
+              <n-grid-item>
+                <n-statistic label="输入功率">
+                  {{ rectifierInfo.inputPower.toFixed(0) }}W
+                </n-statistic>
+              </n-grid-item>
+            </n-grid>
+            <n-grid cols="3">
+              <n-grid-item>
+                <n-statistic label="输出电压">
+                  {{ rectifierInfo.outputVoltage.toFixed(2) }}V
+                </n-statistic>
+              </n-grid-item>
+              <n-grid-item>
+                <n-statistic label="输出电流">
+                  {{ rectifierInfo.outputCurrent.toFixed(2) }}A
+                </n-statistic>
+              </n-grid-item>
+              <n-grid-item>
+                <n-statistic label="输出功率">
+                  {{ rectifierInfo.outputPower.toFixed(0) }}W
+                </n-statistic>
+              </n-grid-item>
+            </n-grid>
+            <n-grid cols="3">
+              <n-grid-item>
+                <n-statistic label="输入模块温度">
+                  <n-icon size="22" color="#0e7a0d" class="align-icon">
+                    <Temperature16Regular />
+                  </n-icon>
+                  <span class="align-text">{{ rectifierInfo.inputModuleTemp.toFixed(0) }}℃</span>
+                </n-statistic>
+              </n-grid-item>
+              <n-grid-item>
+                <n-statistic label="输出模块温度">
+                  <n-icon size="22" color="#0e7a0d" class="align-icon">
+                    <Temperature16Regular />
+                  </n-icon>
+                  <span class="align-text">{{ rectifierInfo.outputModuleTemp.toFixed(0) }}℃</span>
+                </n-statistic>
+              </n-grid-item>
+              <n-grid-item>
+                <n-statistic label="效率">
+                  {{ (rectifierInfo.efficiency * 100).toFixed(1) }}%
+                </n-statistic>
+              </n-grid-item>
+            </n-grid>
+          </div>
+          <div v-else>
+            读取整流器信息失败！
+          </div>
+        </n-card>
+        <n-card title="系统设置">
+
+        </n-card>
+      </div>
     </n-grid-item>
   </n-grid>
 </template>
@@ -343,5 +349,11 @@ function severityToType(severity: Severity) {
 
 .batt-cap-text {
   display: inline-block;
+}
+
+.two-box {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 </style>
